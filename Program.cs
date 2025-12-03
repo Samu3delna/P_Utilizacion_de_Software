@@ -1,4 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+using P_Utilizacion_de_Software.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// -----------------------------------------------------------
+// BLOQUE DE CONEXIÓN A LA BASE DE DATOS
+// -----------------------------------------------------------
+
+// 1. Obtiene la cadena de conexión del appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// 2. Registra ApplicationDbContext para usar el proveedor SQL Server
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// -----------------------------------------------------------
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -25,5 +41,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
 app.Run();
+Add-Migration InitialCreate
+Update-Database
