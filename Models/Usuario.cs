@@ -1,16 +1,27 @@
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 namespace P_Utilizacion_de_Software.Models
 {
+    
     public class Usuario
     {
-        public int Id { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Contraseña { get; set; } = string.Empty;
-        public string Rol { get; set; } = string.Empty; // "Estudiante" o "Profesor"
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public int UsuarioId { get; set; } // PK, IDENTITY
 
-        // Relaciones
-        public ICollection<ProyectoParticipantes> ProyectosParticipantes { get; set; } = new List<ProyectoParticipantes>();
-        public ICollection<Tarea> TareasAsignadas { get; set; } = new List<Tarea>();
+        [Required]
+        public string Nombre { get; set; }
+
+        [Required, EmailAddress]
+        public string Correo { get; set; }
+
+        [Required]
+        public string ContrasenaHash { get; set; } // Almacena el hash
+
+        [Required]
+        public RolUsuario Rol { get; set; }
+
+        // Propiedades de Navegación (Relaciones)
+        public ICollection<Proyecto> ProyectosCreados { get; set; } // 1:N Profesor -> Proyectos
+        public ICollection<Tarea> TareasAsignadas { get; set; }     // 1:N Usuario -> Tareas
+        public ICollection<ProyectoParticipantes> ProyectosParticipa { get; set; } // N:M
     }
 }

@@ -1,21 +1,27 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace P_Utilizacion_de_Software.Models
 {
     public class Tarea
     {
-        public int Id { get; set; }
-        public string Titulo { get; set; } = string.Empty;
-        public string Descripcion { get; set; } = string.Empty;
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
-        public DateTime? FechaVencimiento { get; set; }
-        public string Estado { get; set; } = "Pendiente"; // "Pendiente", "En Progreso", "Completada"
-        public string Prioridad { get; set; } = "Media"; // "Baja", "Media", "Alta"
+        public int TareaId { get; set; } // PK, IDENTITY
 
-        // Claves foráneas
+        [Required]
+        public string Titulo { get; set; }
+
+        public string Descripcion { get; set; }
+
+        public DateTime FechaLimite { get; set; }
+
+        [Required]
+        public EstadoTarea Estado { get; set; }
+
+        // Relación N:1 con Proyecto
         public int ProyectoId { get; set; }
-        public int? UsuarioAsignadoId { get; set; }
+        public Proyecto Proyecto { get; set; }
 
-        // Relaciones
-        public Proyecto? Proyecto { get; set; }
-        public Usuario? UsuarioAsignado { get; set; }
+        // Relación N:1 con Estudiante (Usuario)
+        public int EstudianteAsignadoId { get; set; }
+        public Usuario EstudianteAsignado { get; set; }
     }
 }
