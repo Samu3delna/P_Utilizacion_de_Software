@@ -21,6 +21,14 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+ar builder = WebApplication.CreateBuilder(args);
+
+// ... (Tu bloque de AddDbContext y AddAuthentication) ...
+
+// AÑADIR REGISTRO DE SERVICIOS
+builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<ProyectoService>();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

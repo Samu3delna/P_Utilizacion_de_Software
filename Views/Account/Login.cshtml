@@ -1,0 +1,47 @@
+﻿@model P_Utilizacion_de_Software.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<h1 class="text-center mb-4">Iniciar Sesión</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow p-4">
+            <!-- El formulario llama al método POST Login en AccountController -->
+            <form asp-action="Login">
+
+                <!-- Muestra errores generales (ej: credenciales inválidas) -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Correo -->
+                <div class="form-group mb-3">
+                    <label asp-for="Correo" class="form-label"></label>
+                    <input asp-for="Correo" class="form-control" />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group mb-4">
+                    <label asp-for="Contrasena" class="form-label"></label>
+                    <input asp-for="Contrasena" class="form-control" type="password" />
+                    <span asp-validation-for="Contrasena" class="text-danger"></span>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="d-grid gap-2">
+                    <input type="submit" value="Acceder" class="btn btn-success" />
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <a asp-action="Register">¿No tienes cuenta? Regístrate aquí</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

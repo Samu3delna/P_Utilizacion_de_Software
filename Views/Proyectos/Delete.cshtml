@@ -1,0 +1,49 @@
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
+
+@{
+    ViewData["Title"] = "Eliminar Proyecto";
+}
+
+<h1 class="text-danger mb-4">Confirmar Eliminación</h1>
+<h3 class="lead">¿Estás seguro de que deseas eliminar este proyecto? Esta acción es irreversible.</h3>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow p-4 border-danger">
+
+            <dl class="row">
+                <!-- Nombre -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                <dd class="col-sm-9"><strong>@Html.DisplayFor(model => model.Nombre)</strong></dd>
+
+                <!-- Descripción -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+
+                <!-- Fecha de Inicio -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+                <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
+
+                <!-- Fecha de Finalización -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFinalizacion)</dt>
+                <dd class="col-sm-9">@Model.FechaFinalizacion.ToShortDateString()</dd>
+            </dl>
+
+            <!-- Formulario que llama al método POST DeleteConfirmed en ProyectosController -->
+            <form asp-action="Delete">
+                <!-- Campo oculto para enviar el ID del proyecto a eliminar -->
+                <input type="hidden" asp-for="ProyectoId" />
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancelar y Volver
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirmar Eliminación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
