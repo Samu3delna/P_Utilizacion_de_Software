@@ -1,8 +1,58 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio - Gestor de Proyectos";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4 mb-4">Gestor de Proyectos ISB-27</h1>
+    <p class="lead">
+        La plataforma para Profesores y Estudiantes que facilita la gestión y seguimiento de proyectos académicos.
+    </p>
+
+    <hr class="my-4" />
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        // =======================================================
+        // CONTENIDO PARA USUARIOS AUTENTICADOS
+        // =======================================================
+
+    <div class="p-4 bg-light rounded shadow-sm">
+        <h2 class="text-success mb-3">¡Bienvenido/a, @User.Identity.Name!</h2>
+
+        @if (User.IsInRole("Profesor"))
+            {
+        <p>Tu rol es **Profesor**. Desde aquí puedes crear, asignar y supervisar proyectos.</p>
+        <a asp-controller="Proyectos" asp-action="Index" class="btn btn-lg btn-success mt-2">
+            <i class="bi bi-folder2-open"></i> Ir a Mis Proyectos
+        </a>
+            }
+            else if (User.IsInRole("Estudiante"))
+            {
+        <p>Tu rol es **Estudiante**. Revisa los proyectos en los que estás participando y tus tareas asignadas.</p>
+        <a asp-controller="Proyectos" asp-action="Index" class="btn btn-lg btn-info text-white mt-2">
+            <i class="bi bi-list-check"></i> Ver Proyectos Asignados
+        </a>
+            }
+    </div>
+    }
+    else
+    {
+        // =======================================================
+        // CONTENIDO PARA VISITANTES (NO LOGUEADOS)
+        // =======================================================
+
+    <div class="mt-5 p-5 bg-white rounded shadow">
+        <h2 class="text-secondary mb-4">Accede a la Plataforma</h2>
+        <p>Para empezar a gestionar o participar en proyectos, por favor inicia sesión o regístrate.</p>
+
+        <div class="d-grid gap-3 col-md-6 mx-auto mt-4">
+            <a asp-controller="Account" asp-action="Login" class="btn btn-lg btn-success">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-lg btn-outline-primary">
+                <i class="bi bi-person-plus"></i> Registrarse como Estudiante
+            </a>
+        </div>
+    </div>
+    }
 </div>

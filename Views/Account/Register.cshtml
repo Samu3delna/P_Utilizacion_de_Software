@@ -1,5 +1,69 @@
+<<<<<<< HEAD
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
+=======
+﻿@model P_Utilizacion_de_Software.Models.ViewModels.RegistroViewModel
+@{
+    ViewData["Title"] = "Registro de Estudiante";
+}
+
+<h1 class="text-center mb-4">Registro de Usuario</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <!-- El formulario llama al método POST Register en AccountController -->
+            <form asp-action="Register">
+
+                <!-- Resumen de errores de validación del modelo -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Nombre -->
+                <div class="form-group mb-3">
+                    <label asp-for="Nombre" class="form-label"></label>
+                    <input asp-for="Nombre" class="form-control" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <!-- Correo -->
+                <div class="form-group mb-3">
+                    <label asp-for="Correo" class="form-label"></label>
+                    <input asp-for="Correo" class="form-control" />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group mb-3">
+                    <label asp-for="Contrasena" class="form-label"></label>
+                    <input asp-for="Contrasena" class="form-control" type="password" />
+                    <span asp-validation-for="Contrasena" class="text-danger"></span>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div class="form-group mb-4">
+                    <label asp-for="ConfirmarContrasena" class="form-label"></label>
+                    <input asp-for="ConfirmarContrasena" class="form-control" type="password" />
+                    <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="d-grid gap-2">
+                    <input type="submit" value="Registrarse como Estudiante" class="btn btn-primary" />
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <a asp-action="Login">¿Ya tienes una cuenta? Inicia sesión</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+>>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
