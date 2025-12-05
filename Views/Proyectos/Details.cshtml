@@ -1,0 +1,72 @@
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
+
+@{
+    ViewData["Title"] = "Detalles del Proyecto";
+    // Determinar el rol para decidir qué botones mostrar
+    var rol = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var esProfesor = rol == "Profesor";
+}
+
+<h1 class="mb-4">Detalles del Proyecto: @Model.Nombre</h1>
+<hr />
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow p-4 mb-4">
+            <h4 class="card-title text-primary mb-3">Información General</h4>
+
+            <dl class="row">
+                <!-- Nombre -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                <dd class="col-sm-9"><strong>@Html.DisplayFor(model => model.Nombre)</strong></dd>
+
+                <!-- Descripción -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+
+                <!-- Fecha de Inicio -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+                <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
+
+                <!-- Fecha de Finalización -->
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFinalizacion)</dt>
+                <dd class="col-sm-9">@Model.FechaFinalizacion.ToShortDateString()</dd>
+
+                @if (Model.ProfesorCreador != null)
+                {
+                    <!-- Profesor Creador (Se muestra si se carga la relación) -->
+                <dt class="col-sm-3">Profesor Creador</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.ProfesorCreador.Nombre)</dd>
+                }
+            </dl>
+        </div>
+
+        <!-- Sección de Tareas (Placeholder, se implementará más adelante) -->
+        <div class="card shadow p-4">
+            <h4 class="card-title text-primary mb-3">Tareas Asociadas (Pendiente)</h4>
+            <p class="text-muted">Esta sección listará las tareas una vez implementemos el módulo de Tareas y su relación.</p>
+
+            @if (esProfesor)
+             {
+            <a href="#" class="btn btn-sm btn-outline-primary w-25 mt-2 disabled">Agregar Tarea</a>
+             }
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    @if (esProfesor)
+    {
+        <!-- Botones de administración visibles solo para Profesor -->
+    <a asp-action="Edit" asp-route-id="@Model.ProyectoId" class="btn btn-warning">
+        <i class="bi bi-pencil"></i> Editar
+    </a>
+    <a asp-action="Delete" asp-route-id="@Model.ProyectoId" class="btn btn-danger">
+        <i class="bi bi-trash"></i> Eliminar
+    </a>
+    }
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al Listado
+    </a>
+</div>
