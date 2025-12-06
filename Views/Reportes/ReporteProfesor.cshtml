@@ -1,0 +1,47 @@
+﻿@model IEnumerable<P_Utilizacion_de_Software.Models.Proyecto>
+@{
+    ViewData["Title"] = "Reporte General";
+}
+
+<h2 class="mb-4">Reporte General de Proyectos</h2>
+
+@foreach (var proyecto in Model)
+{
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between">
+            <span class="fw-bold">@proyecto.Nombre</span>
+            <small>@proyecto.FechaInicio.ToShortDateString() - @proyecto.FechaFinalizacion.ToShortDateString()</small>
+        </div>
+        <div class="card-body">
+            @if (proyecto.Tareas != null && proyecto.Tareas.Any())
+            {
+                var total = proyecto.Tareas.Count;
+                var completadas = proyecto.Tareas.Count(t => t.Estado == P_Utilizacion_de_Software.Models.EstadoTarea.Completada);
+                var pct = (int)((double)completadas / total * 100);
+
+                <label class="small fw-bold">Progreso del Proyecto: @pct%</label>
+                <div class="progress mb-3" style="height: 15px;">
+                    <div class="progress-bar bg-success" style="width: @pct%"></div>
+                </div>
+
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light"><tr><th>Tarea</th><th>Responsable</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        @foreach (var t in proyecto.Tareas)
+                        {
+                            <tr>
+                                <td>@t.Titulo</td>
+                                <td>@(t.EstudianteAsignado?.Nombre ?? "-")</td>
+                                <td>@t.Estado</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <span class="text-muted fst-italic">Sin tareas registradas.</span>
+            }
+        </div>
+    </div>
+}

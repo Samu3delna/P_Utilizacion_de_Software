@@ -1,8 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4 fw-bold text-primary">Gestor Académico</h1>
+    <p class="lead text-muted">Organiza tus proyectos, tareas y equipos de manera eficiente.</p>
+
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <div class="card mx-auto mt-4 shadow-sm" style="max-width: 500px;">
+            <div class="card-body">
+                <h4 class="card-title">Hola, @User.Identity.Name 👋</h4>
+                <p class="card-text">
+                    Rol detectado:
+                    <span class="badge bg-info text-dark">
+                        @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                    </span>
+                </p>
+                <hr />
+                <a asp-controller="Proyectos" asp-action="Index" class="btn btn-primary w-100 mb-2">
+                    Ir a mis Proyectos
+                </a>
+                @if (User.IsInRole("Estudiante"))
+                {
+                    <a asp-controller="Reportes" asp-action="ReportePersonal" class="btn btn-outline-secondary w-100">
+                        Ver mis Tareas Pendientes
+                    </a>
+                }
+                @if (User.IsInRole("Profesor"))
+                {
+                    <a asp-controller="Reportes" asp-action="ReporteProfesor" class="btn btn-outline-dark w-100">
+                        Ver Reporte General
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="mt-5">
+            <div class="alert alert-light border shadow-sm p-4 d-inline-block">
+                <p>Por favor inicia sesión para continuar.</p>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg mx-2 px-4">Iniciar Sesión</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-secondary btn-lg mx-2 px-4">Registrarse</a>
+            </div>
+        </div>
+    }
 </div>

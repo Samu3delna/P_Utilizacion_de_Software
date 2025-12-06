@@ -1,0 +1,99 @@
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
+
+@{
+    ViewData["Title"] = "Detalles del Proyecto";
+    var esProfesor = User.IsInRole("Profesor");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="fw-bold">@Model.Nombre</h1>
+        <p class="text-muted mb-0">@Model.Descripcion</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">@TempData["Mensaje"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-primary">📋 Tareas</h5>
+                <a asp-controller="Tareas" asp-action="Create" asp-route-proyectoId="@Model.ProyectoId" class="btn btn-sm btn-primary">+ Nueva Tarea</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Asignado</th>
+                            <th>Estado</th>
+                            <th>Límite</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Tareas != null && Model.Tareas.Any())
+                        {
+                            @foreach (var tarea in Model.Tareas)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@tarea.Titulo</td>
+                                    <td>@(tarea.EstudianteAsignado?.Nombre ?? "Sin asignar")</td>
+                                    <td>
+                                        <span class="badge bg-@(tarea.Estado.ToString() == "Completada" ? "success" : (tarea.Estado.ToString() == "EnProgreso" ? "warning text-dark" : "secondary"))">
+                                            @tarea.Estado
+                                        </span>
+                                    </td>
+                                    <td>@tarea.FechaLimite.ToShortDateString()</td>
+                                    <td class="text-end">
+                                        <a asp-controller="Tareas" asp-action="Edit" asp-route-id="@tarea.TareaId" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        @if (esProfesor)
+                                        {
+                                            <a asp-controller="Tareas" asp-action="Delete" asp-route-id="@tarea.TareaId" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar?');">🗑️</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center p-4 text-muted">No hay tareas.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-info">👥 Participantes</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (Model.Participantes != null && Model.Participantes.Any())
+                {
+                    foreach (var part in Model.Participantes)
+                    {
+                        <li class="list-group-item">@part.Estudiante?.Nombre</li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-center text-muted">No hay estudiantes.</li>
+                }
+            </ul>
+            @if (esProfesor)
+            {
+                <div class="card-body border-top">
+                    <a asp-action="AddStudent" asp-route-id="@Model.ProyectoId" class="btn btn-outline-info w-100">Agregar Estudiante</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

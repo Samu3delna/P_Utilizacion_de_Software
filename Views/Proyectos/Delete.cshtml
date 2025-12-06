@@ -1,0 +1,17 @@
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
+@{
+    ViewData["Title"] = "Eliminar Proyecto";
+}
+
+<div class="form-container border-danger" style="border: 1px solid #dc3545;">
+    <h3 class="text-danger text-center">¿Estás seguro?</h3>
+    <p class="text-center">Vas a eliminar el proyecto <strong>@Model.Nombre</strong>. <br> Esto borrará todas las tareas asociadas permanentemente.</p>
+
+    <div class="d-flex justify-content-center gap-2 mt-4">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="ProyectoId" />
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        </form>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</div>

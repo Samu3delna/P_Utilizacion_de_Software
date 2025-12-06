@@ -1,0 +1,37 @@
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
+@{
+    ViewData["Title"] = "Nuevo Proyecto";
+}
+
+<div class="form-container" style="max-width: 700px;">
+    <h2 class="mb-4">Crear Nuevo Proyecto</h2>
+    <form asp-action="Create">
+        <div class="form-group mb-3">
+            <label asp-for="Nombre" class="fw-bold"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Descripcion" class="fw-bold"></label>
+            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaInicio" class="fw-bold">Inicio</label>
+                <input asp-for="FechaInicio" class="form-control" type="date" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaFinalizacion" class="fw-bold">Fin</label>
+                <input asp-for="FechaFinalizacion" class="form-control" type="date" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Crear Proyecto</button>
+        <a asp-action="Index" class="btn btn-link text-muted">Cancelar</a>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
