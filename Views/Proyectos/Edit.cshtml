@@ -1,68 +1,43 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-@model P_Utilizacion_de_Software.Models.Proyecto
-
+﻿@model P_Utilizacion_de_Software.Models.Proyecto
 @{
     ViewData["Title"] = "Editar Proyecto";
 }
 
-<h1 class="mb-4">Editar Proyecto: @Model.Nombre</h1>
-<hr />
+<div class="form-container">
+    <h2>Editar Proyecto</h2>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ProyectoId" />
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow p-4">
-            <!-- El formulario llama al método POST Edit en ProyectosController -->
-            <form asp-action="Edit">
-                <!-- CAMPO CLAVE: El ID debe enviarse para saber qué registro actualizar -->
-                <input type="hidden" asp-for="ProyectoId" />
-
-                <!-- También necesitamos el ID del profesor creador para la validación de seguridad en el controlador -->
-                <input type="hidden" asp-for="ProfesorCreadorId" />
-
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <!-- Nombre del Proyecto -->
-                <div class="form-group mb-3">
-                    <label asp-for="Nombre" class="form-label">Nombre del Proyecto</label>
-                    <input asp-for="Nombre" class="form-control" />
-                    <span asp-validation-for="Nombre" class="text-danger"></span>
-                </div>
-
-                <!-- Descripción -->
-                <div class="form-group mb-3">
-                    <label asp-for="Descripcion" class="form-label">Descripción</label>
-                    <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                </div>
-
-                <!-- Fecha de Inicio -->
-                <div class="form-group mb-3">
-                    <label asp-for="FechaInicio" class="form-label">Fecha de Inicio</label>
-                    <!-- Usamos type="date" y .ToString("yyyy-MM-dd") para asegurar la compatibilidad con el input date -->
-                    <input asp-for="FechaInicio" class="form-control" type="date" value="@Model.FechaInicio.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
-                </div>
-
-                <!-- Fecha de Finalización -->
-                <div class="form-group mb-4">
-                    <label asp-for="FechaFinalizacion" class="form-label">Fecha de Finalización</label>
-                    <input asp-for="FechaFinalizacion" class="form-control" type="date" value="@Model.FechaFinalizacion.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="FechaFinalizacion" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-x-circle"></i> Cancelar y Volver
-                    </a>
-                    <input type="submit" value="Guardar Cambios" class="btn btn-warning" />
-                </div>
-            </form>
+        <div class="form-group mb-3">
+            <label asp-for="Nombre" class="fw-bold"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
         </div>
-    </div>
-</div>
+        <div class="form-group mb-3">
+            <label asp-for="Descripcion" class="fw-bold"></label>
+            <textarea asp-for="Descripcion" class="form-control"></textarea>
+        </div>
+        <div class="row mb-3">
+            <div class="col-6">
+                <label asp-for="FechaInicio" class="fw-bold"></label>
+                <input asp-for="FechaInicio" class="form-control" type="date" />
+            </div>
+            <div class="col-6">
+                <label asp-for="FechaFinalizacion" class="fw-bold"></label>
+                <input asp-for="FechaFinalizacion" class="form-control" type="date" />
+            </div>
+        </div>
 
+        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+        <div class="text-center mt-2">
+            <a asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

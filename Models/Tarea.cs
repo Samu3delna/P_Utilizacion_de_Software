@@ -4,24 +4,28 @@ namespace P_Utilizacion_de_Software.Models
 {
     public class Tarea
     {
-        public int TareaId { get; set; } // PK, IDENTITY
+        public int TareaId { get; set; } // Llave Primaria
 
-        [Required]
-        public string Titulo { get; set; }
+        [Required(ErrorMessage = "El título es obligatorio.")]
+        public required string Titulo { get; set; }
 
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; } // Puede ser nulo
 
+        [Required(ErrorMessage = "La fecha límite es obligatoria.")]
+        [DataType(DataType.Date)]
         public DateTime FechaLimite { get; set; }
 
         [Required]
-        public EstadoTarea Estado { get; set; }
+        public EstadoTarea Estado { get; set; } // Enum: Pendiente, EnProgreso, Completada
 
-        // Relación N:1 con Proyecto
+        // --- Relaciones ---
+
+        // FK: Proyecto al que pertenece
         public int ProyectoId { get; set; }
-        public Proyecto Proyecto { get; set; }
+        public Proyecto? Proyecto { get; set; }
 
-        // Relación N:1 con Estudiante (Usuario)
+        // FK: Estudiante responsable
         public int EstudianteAsignadoId { get; set; }
-        public Usuario EstudianteAsignado { get; set; }
+        public Usuario? EstudianteAsignado { get; set; }
     }
 }

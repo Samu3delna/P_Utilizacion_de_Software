@@ -2,71 +2,98 @@
 
 @{
     ViewData["Title"] = "Detalles del Proyecto";
-    // Determinar el rol para decidir qué botones mostrar
-    var rol = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-    var esProfesor = rol == "Profesor";
+    var esProfesor = User.IsInRole("Profesor");
 }
 
-<h1 class="mb-4">Detalles del Proyecto: @Model.Nombre</h1>
-<hr />
-
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card shadow p-4 mb-4">
-            <h4 class="card-title text-primary mb-3">Información General</h4>
-
-            <dl class="row">
-                <!-- Nombre -->
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-                <dd class="col-sm-9"><strong>@Html.DisplayFor(model => model.Nombre)</strong></dd>
-
-                <!-- Descripción -->
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-
-                <!-- Fecha de Inicio -->
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
-                <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
-
-                <!-- Fecha de Finalización -->
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFinalizacion)</dt>
-                <dd class="col-sm-9">@Model.FechaFinalizacion.ToShortDateString()</dd>
-
-                @if (Model.ProfesorCreador != null)
-                {
-                    <!-- Profesor Creador (Se muestra si se carga la relación) -->
-                <dt class="col-sm-3">Profesor Creador</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.ProfesorCreador.Nombre)</dd>
-                }
-            </dl>
-        </div>
-
-        <!-- Sección de Tareas (Placeholder, se implementará más adelante) -->
-        <div class="card shadow p-4">
-            <h4 class="card-title text-primary mb-3">Tareas Asociadas (Pendiente)</h4>
-            <p class="text-muted">Esta sección listará las tareas una vez implementemos el módulo de Tareas y su relación.</p>
-
-            @if (esProfesor)
-             {
-            <a href="#" class="btn btn-sm btn-outline-primary w-25 mt-2 disabled">Agregar Tarea</a>
-             }
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="fw-bold">@Model.Nombre</h1>
+        <p class="text-muted mb-0">@Model.Descripcion</p>
     </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
 </div>
 
-<div class="mt-4">
-    @if (esProfesor)
-    {
-        <!-- Botones de administración visibles solo para Profesor -->
-    <a asp-action="Edit" asp-route-id="@Model.ProyectoId" class="btn btn-warning">
-        <i class="bi bi-pencil"></i> Editar
-    </a>
-    <a asp-action="Delete" asp-route-id="@Model.ProyectoId" class="btn btn-danger">
-        <i class="bi bi-trash"></i> Eliminar
-    </a>
-    }
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">@TempData["Mensaje"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+}
 
-    <a asp-action="Index" class="btn btn-secondary">
-        <i class="bi bi-arrow-left"></i> Volver al Listado
-    </a>
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-primary">📋 Tareas</h5>
+                <a asp-controller="Tareas" asp-action="Create" asp-route-proyectoId="@Model.ProyectoId" class="btn btn-sm btn-primary">+ Nueva Tarea</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarea</th>
+                            <th>Asignado</th>
+                            <th>Estado</th>
+                            <th>Límite</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Tareas != null && Model.Tareas.Any())
+                        {
+                            @foreach (var tarea in Model.Tareas)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@tarea.Titulo</td>
+                                    <td>@(tarea.EstudianteAsignado?.Nombre ?? "Sin asignar")</td>
+                                    <td>
+                                        <span class="badge bg-@(tarea.Estado.ToString() == "Completada" ? "success" : (tarea.Estado.ToString() == "EnProgreso" ? "warning text-dark" : "secondary"))">
+                                            @tarea.Estado
+                                        </span>
+                                    </td>
+                                    <td>@tarea.FechaLimite.ToShortDateString()</td>
+                                    <td class="text-end">
+                                        <a asp-controller="Tareas" asp-action="Edit" asp-route-id="@tarea.TareaId" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        @if (esProfesor)
+                                        {
+                                            <a asp-controller="Tareas" asp-action="Delete" asp-route-id="@tarea.TareaId" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar?');">🗑️</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center p-4 text-muted">No hay tareas.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-info">👥 Participantes</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (Model.Participantes != null && Model.Participantes.Any())
+                {
+                    foreach (var part in Model.Participantes)
+                    {
+                        <li class="list-group-item">@part.Estudiante?.Nombre</li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-center text-muted">No hay estudiantes.</li>
+                }
+            </ul>
+            @if (esProfesor)
+            {
+                <div class="card-body border-top">
+                    <a asp-action="AddStudent" asp-route-id="@Model.ProyectoId" class="btn btn-outline-info w-100">Agregar Estudiante</a>
+                </div>
+            }
+        </div>
+    </div>
 </div>

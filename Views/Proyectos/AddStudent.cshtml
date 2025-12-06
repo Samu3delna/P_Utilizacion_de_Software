@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Agregar Estudiante";
+}
+<div class="form-container">
+    <h3>Agregar Estudiante</h3>
+    <form asp-action="AddStudent">
+        <input type="hidden" name="ProyectoId" value="@ViewData["ProyectoId"]" />
+        <div class="form-group mb-4">
+            <label class="control-label fw-bold mb-2">Seleccione un Estudiante:</label>
+            <select name="EstudianteId" class="form-select" asp-items="ViewBag.EstudianteId"></select>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Agregar al Proyecto</button>
+        <div class="text-center mt-3">
+            <a asp-action="Details" asp-route-id="@ViewData["ProyectoId"]">Cancelar</a>
+        </div>
+    </form>
+</div>

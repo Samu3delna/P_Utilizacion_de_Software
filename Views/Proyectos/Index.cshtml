@@ -1,53 +1,57 @@
-﻿@* @using System.Security.Claims es implícito en .NET 6+ *@
+﻿@model IEnumerable<P_Utilizacion_de_Software.Models.Proyecto>
+
 @{
-    ViewData["Title"] = "Página Principal";
+    ViewData["Title"] = "Mis Proyectos";
+    var esProfesor = User.IsInRole("Profesor");
 }
 
-<div class="text-center">
-
-    @* ------------------------------------------------------------- *@
-    @* SI EL USUARIO ESTÁ AUTENTICADO (Ha iniciado sesión) *@
-    @* ------------------------------------------------------------- *@
-    @if (User.Identity.IsAuthenticated)
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Mis Proyectos</h1>
+    @if (esProfesor)
     {
-    <h2>¡Bienvenido al Gestor de Proyectos, @User.Identity.Name!</h2>
-
-    @{
-            // Obtener el rol que guardamos en el ClaimTypes.Role
-            var rol = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-    }
-
-    <p class="lead">Tu rol en el sistema es: <strong>@rol</strong></p>
-
-    <hr />
-
-    <h3>¿Qué deseas hacer?</h3>
-    <p class="mt-3">
-        <a asp-controller="Proyectos" asp-action="Index" class="btn btn-primary btn-lg">
-            Ir a Mis Proyectos
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg"></i> Nuevo Proyecto
         </a>
-
-        @* Botón de Logout para conveniencia *@
-        <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-danger btn-lg">
-                Cerrar Sesión
-            </button>
-        </form>
-    </p>
     }
-    @* ------------------------------------------------------------- *@
-    @* SI EL USUARIO NO ESTÁ AUTENTICADO (Anónimo) *@
-    @* ------------------------------------------------------------- *@
-    else
-    {
-    <h1 class="display-4">¡Bienvenido a P_Utilizacion_de_Software!</h1>
-    <p class="lead">
-        Por favor, inicia sesión o regístrate para comenzar a gestionar proyectos.
-    </p>
+</div>
 
-    <div class="mt-4">
-        <a asp-controller="Account" asp-action="Login" class="btn btn-success btn-lg">Iniciar Sesión</a>
-        <a asp-controller="Account" asp-action="Register" class="btn btn-secondary btn-lg">Registrarse</a>
-    </div>
-    }
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Proyecto</th>
+                <th>Descripción</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                @if (!esProfesor)
+                {
+                    <th>Profesor</th>
+                }
+                <th class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold text-primary">@item.Nombre</td>
+                    <td>@(item.Descripcion?.Length > 50 ? item.Descripcion.Substring(0, 50) + "..." : item.Descripcion)</td>
+                    <td>@item.FechaInicio.ToShortDateString()</td>
+                    <td>@item.FechaFinalizacion.ToShortDateString()</td>
+                    @if (!esProfesor)
+                    {
+                        <td>@item.ProfesorCreador?.Nombre</td>
+                    }
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@item.ProyectoId" class="btn btn-sm btn-info text-white">Ver Tablero</a>
+                        @if (esProfesor)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ProyectoId" class="btn btn-sm btn-warning text-dark">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.ProyectoId" class="btn btn-sm btn-danger">X</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

@@ -1,0 +1,63 @@
+﻿@model P_Utilizacion_de_Software.Models.Tarea
+@{
+    ViewData["Title"] = "Editar Tarea";
+}
+
+<div class="form-container">
+    <h2>Editar Tarea</h2>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="TareaId" />
+        <input type="hidden" asp-for="ProyectoId" />
+
+        @if (User.IsInRole("Estudiante"))
+        {
+            <input type="hidden" asp-for="Titulo" />
+            <input type="hidden" asp-for="Descripcion" />
+            <input type="hidden" asp-for="FechaLimite" />
+            <input type="hidden" asp-for="EstudianteAsignadoId" />
+
+            <div class="alert alert-secondary">
+                <h5 class="alert-heading">@Model.Titulo</h5>
+                <p class="mb-0">@Model.Descripcion</p>
+                <hr>
+                <small>Fecha Límite: @Model.FechaLimite.ToShortDateString()</small>
+            </div>
+        }
+        else
+        {
+            <div class="form-group mb-3">
+                <label asp-for="Titulo" class="fw-bold"></label>
+                <input asp-for="Titulo" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Descripcion" class="fw-bold"></label>
+                <textarea asp-for="Descripcion" class="form-control"></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="EstudianteAsignadoId" class="fw-bold">Asignado a:</label>
+                <select asp-for="EstudianteAsignadoId" class="form-select" asp-items="ViewBag.EstudianteAsignadoId"></select>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="FechaLimite" class="fw-bold"></label>
+                <input asp-for="FechaLimite" class="form-control" type="date" />
+            </div>
+        }
+
+        <div class="form-group mb-4">
+            <label asp-for="Estado" class="fw-bold text-primary">Estado Actual</label>
+            <select asp-for="Estado" class="form-select border-primary" asp-items="Html.GetEnumSelectList<P_Utilizacion_de_Software.Models.EstadoTarea>()"></select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+        <div class="text-center mt-2">
+            <a asp-controller="Proyectos" asp-action="Details" asp-route-id="@Model.ProyectoId">Cancelar</a>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

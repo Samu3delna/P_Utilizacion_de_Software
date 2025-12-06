@@ -1,96 +1,156 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using P_Utilizacion_de_Software.Models; // Asegúrate de que este using esté para acceder a Proyecto y RolUsuario
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using P_Utilizacion_de_Software.Data;
+using P_Utilizacion_de_Software.Models;
 using P_Utilizacion_de_Software.Services;
-using System;
 using System.Security.Claims;
 
 namespace P_Utilizacion_de_Software.Controllers
 {
-    // [Authorize] obliga al usuario a iniciar sesión para acceder a CUALQUIER acción
     [Authorize]
     public class ProyectosController : Controller
     {
         private readonly ProyectoService _proyectoService;
+        private readonly UsuarioService _usuarioService;
 
-        // Constructor para Inyección de Dependencias
-        public ProyectosController(ProyectoService proyectoService)
+        public ProyectosController(ProyectoService proyectoService, UsuarioService usuarioService)
         {
             _proyectoService = proyectoService;
+            _usuarioService = usuarioService;
         }
 
-        // =========================================================
-        // ACCIÓN INDEX (Listado de Proyectos según Rol)
-        // =========================================================
-
-        [HttpGet]
+        // GET: Proyectos (Lista)
         public async Task<IActionResult> Index()
         {
-            // 1. Obtener el ID del usuario logueado
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-            {
-                // Debería ser atrapado por [Authorize], pero es una buena práctica de seguridad.
-                return RedirectToAction("Login", "Account");
-            }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            List<Proyecto> proyectos;
 
-            List<Proyecto> proyectos = new List<Proyecto>();
-            string rol = User.FindFirst(ClaimTypes.Role)?.Value ?? "Invitado";
-
-            // 2. Cargar datos según el Rol
-            if (User.IsInRole(RolUsuario.Profesor.ToString()))
+            if (User.IsInRole("Profesor"))
             {
-                // Si es Profesor, solo ve los proyectos que él ha creado.
                 proyectos = await _proyectoService.GetProyectosByProfesorIdAsync(userId);
             }
-            else if (User.IsInRole(RolUsuario.Estudiante.ToString()))
+            else
             {
-                // Si es Estudiante, solo ve los proyectos en los que participa.
                 proyectos = await _proyectoService.GetProyectosByEstudianteIdAsync(userId);
             }
-
-            ViewData["Rol"] = rol; // Pasamos el rol a la vista para decidir qué botones mostrar
             return View(proyectos);
         }
 
-        // =========================================================
-        // ACCIÓN CREATE (Solo para Profesor)
-        // =========================================================
-
-        // [Authorize(Roles = "Profesor")] es la restricción CRÍTICA.
-        // Si un estudiante intenta acceder, será redirigido a AccessDenied.
-        [Authorize(Roles = "Profesor")]
-        [HttpGet]
-        public IActionResult Create()
+        // GET: Proyectos/Details/5
+        public async Task<IActionResult> Details(int id)
         {
-            // Muestra el formulario vacío para crear un nuevo proyecto
-            return View(new Proyecto());
-        }
-
-        [Authorize(Roles = "Profesor")]
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Protección contra ataques CSRF
-        public async Task<IActionResult> Create(Proyecto proyecto)
-        {
-            // Validamos los campos básicos (nombre, fechas)
-            if (ModelState.IsValid)
-            {
-                // Obtener ID del profesor logueado y asignarlo como creador
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-                proyecto.ProfesorCreadorId = userId;
-
-                // Llama al servicio para guardar el proyecto en la DB
-                await _proyectoService.CreateProyectoAsync(proyecto);
-
-                // Redirige al listado de proyectos
-                return RedirectToAction(nameof(Index));
-            }
-
-            // Si hay errores de validación, regresa al formulario con los datos ingresados
+            var proyecto = await _proyectoService.GetProyectoByIdAsync(id);
+            if (proyecto == null) return NotFound();
             return View(proyecto);
         }
 
-        // ... Aquí se agregarían las acciones para Details, Edit y Delete ...
-        // Estas también deben tener el atributo [Authorize(Roles = "Profesor")]
+        // GET: Proyectos/Create
+        [Authorize(Roles = "Profesor")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Proyectos/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> Create(Proyecto proyecto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            proyecto.ProfesorCreadorId = userId;
+
+            // Ignoramos validaciones de relaciones que aún no existen
+            ModelState.Remove("ProfesorCreador");
+            ModelState.Remove("Tareas");
+            ModelState.Remove("Participantes");
+
+            if (ModelState.IsValid)
+            {
+                await _proyectoService.CreateProyectoAsync(proyecto);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(proyecto);
+        }
+
+        // GET: Proyectos/Edit/5 (ESTE ES EL QUE TE FALTA PARA QUE NO DE 404)
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var proyecto = await _proyectoService.GetProyectoByIdAsync(id);
+            if (proyecto == null) return NotFound();
+
+            // Solo el creador puede editar
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            if (proyecto.ProfesorCreadorId != userId) return Forbid();
+
+            return View(proyecto);
+        }
+
+        // POST: Proyectos/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> Edit(int id, Proyecto proyecto)
+        {
+            if (id != proyecto.ProyectoId) return NotFound();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            proyecto.ProfesorCreadorId = userId; // Mantener el creador original
+
+            ModelState.Remove("ProfesorCreador");
+            ModelState.Remove("Tareas");
+            ModelState.Remove("Participantes");
+
+            if (ModelState.IsValid)
+            {
+                await _proyectoService.UpdateProyectoAsync(proyecto);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(proyecto);
+        }
+
+        // GET: Proyectos/Delete/5 (ESTE TAMBIÉN FALTABA)
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var proyecto = await _proyectoService.GetProyectoByIdAsync(id);
+            if (proyecto == null) return NotFound();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            if (proyecto.ProfesorCreadorId != userId) return Forbid();
+
+            return View(proyecto);
+        }
+
+        // POST: Proyectos/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _proyectoService.DeleteProyectoAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Métodos extra para agregar estudiantes
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> AddStudent(int id)
+        {
+            var estudiantes = await _proyectoService.GetEstudiantesNoAsignadosAsync(id);
+            ViewData["ProyectoId"] = id;
+            ViewBag.EstudianteId = new SelectList(estudiantes, "UsuarioId", "Nombre");
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Profesor")]
+        public async Task<IActionResult> AddStudent(int ProyectoId, int EstudianteId)
+        {
+            await _proyectoService.AddEstudianteAsync(ProyectoId, EstudianteId);
+            return RedirectToAction("Details", new { id = ProyectoId });
+        }
     }
 }

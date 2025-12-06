@@ -1,125 +1,100 @@
-<<<<<<< HEAD
-﻿using Microsoft.AspNetCore.Mvc;
-=======
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization; // Necesario para [Authorize]
 using Microsoft.AspNetCore.Mvc;
-using P_Utilizacion_de_Software.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using System.Threading.Tasks; // Agregado para evitar errores con Task
+using System.Collections.Generic; // Agregado para List<Claim>
 using P_Utilizacion_de_Software.Models.ViewModels;
 using P_Utilizacion_de_Software.Services;
-using System;
-using System.Security.Claims;
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
 
 namespace P_Utilizacion_de_Software.Controllers
 {
     public class AccountController : Controller
     {
-<<<<<<< HEAD
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
-}
-=======
         private readonly UsuarioService _usuarioService;
 
-        // Inyección de Dependencias
         public AccountController(UsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }
 
-        // =========================================================
-        // 1. REGISTRO (GET y POST)
-        // =========================================================
-
+        // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
-            return View(); // Muestra el formulario de registro (Estudiante por defecto)
+            // Si ya está logueado, lo mandamos al inicio
+            if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Home");
+            return View();
         }
 
+        // POST: /Account/Register
         [HttpPost]
         public async Task<IActionResult> Register(RegistroViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // El servicio maneja el hasheo y guardado en la DB
                 bool registroExitoso = await _usuarioService.RegistrarEstudianteAsync(model);
-
                 if (registroExitoso)
                 {
-                    // Redirigir a Login después de un registro exitoso
                     return RedirectToAction("Login");
                 }
-
-                // Error: Correo ya existe
-                ModelState.AddModelError(string.Empty, "El correo electrónico ya está registrado.");
+                ModelState.AddModelError(string.Empty, "El correo ya está registrado.");
             }
             return View(model);
         }
 
-        // =========================================================
-        // 2. LOGIN (GET y POST)
-        // =========================================================
-
+        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
 
+        // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var usuario = await _usuarioService.ValidarCredencialesAsync(model);
-
                 if (usuario != null)
                 {
-                    // Crear la identidad del usuario para la sesión (Claim principal)
+                    // Crear la identidad del usuario (Claims)
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.NameIdentifier, usuario.UsuarioId.ToString()),
                         new Claim(ClaimTypes.Name, usuario.Nombre),
                         new Claim(ClaimTypes.Email, usuario.Correo),
-                        new Claim(ClaimTypes.Role, usuario.Rol.ToString()) // Clave para la autorización
+                        new Claim(ClaimTypes.Role, usuario.Rol.ToString()) // IMPORTANTE: El Rol
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                    // Inicia la sesión y establece la cookie
+                    // Crear la cookie de sesión
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                     return RedirectToAction("Index", "Home");
                 }
-
-                ModelState.AddModelError(string.Empty, "Credenciales inválidas. Revise su correo y contraseña.");
+                ModelState.AddModelError(string.Empty, "Credenciales inválidas.");
             }
             return View(model);
         }
 
-        // =========================================================
-        // 3. LOGOUT
-        // =========================================================
-
-        // El usuario debe estar autenticado para hacer Logout
-        [Authorize]
+        // POST: /Account/Logout
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
+
+        // GET: /Account/AccessDenied
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215

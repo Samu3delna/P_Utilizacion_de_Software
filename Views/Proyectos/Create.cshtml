@@ -1,57 +1,37 @@
 ﻿@model P_Utilizacion_de_Software.Models.Proyecto
-
 @{
-    ViewData["Title"] = "Crear Nuevo Proyecto";
+    ViewData["Title"] = "Nuevo Proyecto";
 }
 
-<h1 class="mb-4">Crear Nuevo Proyecto</h1>
-<hr />
-
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow p-4">
-            <!-- El formulario llama al método POST Create en ProyectosController -->
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <!-- Nombre del Proyecto -->
-                <div class="form-group mb-3">
-                    <label asp-for="Nombre" class="form-label">Nombre del Proyecto</label>
-                    <input asp-for="Nombre" class="form-control" />
-                    <span asp-validation-for="Nombre" class="text-danger"></span>
-                </div>
-
-                <!-- Descripción -->
-                <div class="form-group mb-3">
-                    <label asp-for="Descripcion" class="form-label">Descripción</label>
-                    <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                </div>
-
-                <!-- Fecha de Inicio -->
-                <div class="form-group mb-3">
-                    <label asp-for="FechaInicio" class="form-label">Fecha de Inicio</label>
-                    <!-- Usamos type="date" para una mejor interfaz de usuario -->
-                    <input asp-for="FechaInicio" class="form-control" type="date" />
-                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
-                </div>
-
-                <!-- Fecha de Finalización -->
-                <div class="form-group mb-4">
-                    <label asp-for="FechaFinalizacion" class="form-label">Fecha de Finalización</label>
-                    <input asp-for="FechaFinalizacion" class="form-control" type="date" />
-                    <span asp-validation-for="FechaFinalizacion" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">Cancelar y Volver al Listado</a>
-                    <input type="submit" value="Crear Proyecto" class="btn btn-success" />
-                </div>
-            </form>
+<div class="form-container" style="max-width: 700px;">
+    <h2 class="mb-4">Crear Nuevo Proyecto</h2>
+    <form asp-action="Create">
+        <div class="form-group mb-3">
+            <label asp-for="Nombre" class="fw-bold"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
         </div>
-    </div>
+        <div class="form-group mb-3">
+            <label asp-for="Descripcion" class="fw-bold"></label>
+            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaInicio" class="fw-bold">Inicio</label>
+                <input asp-for="FechaInicio" class="form-control" type="date" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaFinalizacion" class="fw-bold">Fin</label>
+                <input asp-for="FechaFinalizacion" class="form-control" type="date" />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Crear Proyecto</button>
+        <a asp-action="Index" class="btn btn-link text-muted">Cancelar</a>
+    </form>
 </div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

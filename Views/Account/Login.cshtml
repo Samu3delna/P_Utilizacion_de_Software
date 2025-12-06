@@ -1,88 +1,37 @@
-<<<<<<< HEAD
-﻿
-=======
-﻿@model P_Utilizacion_de_Software.Models.ViewModels.LoginViewModel
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
+@model P_Utilizacion_de_Software.Models.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Iniciar Sesión";
 }
 
-<<<<<<< HEAD
-<h1>Iniciar Sesión</h1>
-<hr />
+<div class="form-container">
+    <h2 class="text-center mb-4 text-primary">Iniciar Sesión</h2>
+    <form asp-action="Login">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login">
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Correo" class="control-label"></label>
-                <input asp-for="Correo" class="form-control" />
-                <span asp-validation-for="Correo" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Contrasena" class="control-label"></label>
-                <input asp-for="Contrasena" class="form-control" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Acceder" class="btn btn-success" />
-            </div>
-        </form>
-
-        <div class="mt-3">
-            <a asp-action="Register">¿No tienes cuenta? Regístrate aquí</a>
-=======
-<h1 class="text-center mb-4">Iniciar Sesión</h1>
-<hr />
-
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow p-4">
-            <!-- El formulario llama al método POST Login en AccountController -->
-            <form asp-action="Login">
-
-                <!-- Muestra errores generales (ej: credenciales inválidas) -->
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <!-- Correo -->
-                <div class="form-group mb-3">
-                    <label asp-for="Correo" class="form-label"></label>
-                    <input asp-for="Correo" class="form-control" />
-                    <span asp-validation-for="Correo" class="text-danger"></span>
-                </div>
-
-                <!-- Contraseña -->
-                <div class="form-group mb-4">
-                    <label asp-for="Contrasena" class="form-label"></label>
-                    <input asp-for="Contrasena" class="form-control" type="password" />
-                    <span asp-validation-for="Contrasena" class="text-danger"></span>
-                </div>
-
-                <!-- Botón de Envío -->
-                <div class="d-grid gap-2">
-                    <input type="submit" value="Acceder" class="btn btn-success" />
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <a asp-action="Register">¿No tienes cuenta? Regístrate aquí</a>
-            </div>
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
+        <div class="form-group mb-3">
+            <label asp-for="Correo" class="control-label fw-bold"></label>
+            <input asp-for="Correo" class="form-control" placeholder="nombre@ejemplo.com" />
+            <span asp-validation-for="Correo" class="text-danger"></span>
         </div>
+
+        <div class="form-group mb-4">
+            <label asp-for="Contrasena" class="control-label fw-bold"></label>
+            <input asp-for="Contrasena" class="form-control" placeholder="••••••" />
+            <span asp-validation-for="Contrasena" class="text-danger"></span>
+        </div>
+
+        <div class="d-grid">
+            <input type="submit" value="Ingresar" class="btn btn-primary btn-lg" />
+        </div>
+    </form>
+    <div class="mt-3 text-center">
+        <a asp-action="Register">¿No tienes cuenta? Regístrate</a>
     </div>
 </div>
 
 @section Scripts {
-<<<<<<< HEAD
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-=======
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
+
 }

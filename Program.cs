@@ -1,76 +1,63 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using P_Utilizacion_de_Software.Controllers;
- // Importa tu contexto
+using P_Utilizacion_de_Software.Data;
+using P_Utilizacion_de_Software.Services;
 
-<<<<<<< HEAD
-public partial class Program
-=======
 var builder = WebApplication.CreateBuilder(args);
 
-// -----------------------------------------------------------
-// BLOQUE DE CONEXIÓN A LA BASE DE DATOS
-// -----------------------------------------------------------
-
-// 1. Obtiene la cadena de conexión del appsettings.json
+// ==========================================
+// 1. CONFIGURACIÓN DE BASE DE DATOS
+// ==========================================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// 2. Registra ApplicationDbContext para usar el proveedor SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// -----------------------------------------------------------
+// ==========================================
+// 2. INYECCIÓN DE SERVICIOS (LOGICA)
+// ==========================================
+builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<ProyectoService>();
+builder.Services.AddScoped<TareaService>();
 
-// Add services to the container.
+// ==========================================
+// 3. AUTENTICACIÓN (COOKIES)
+// ==========================================
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";         // Si no estás logueado, te manda aquí
+        options.AccessDeniedPath = "/Account/AccessDenied"; // Si no tienes permiso, te manda aquí
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
+
+// ==========================================
+// 4. SOPORTE PARA MVC
+// ==========================================
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-ar builder = WebApplication.CreateBuilder(args);
+// ==========================================
+// 5. CONFIGURACIÓN DEL PIPELINE
+// ==========================================
 
-// ... (Tu bloque de AddDbContext y AddAuthentication) ...
-
-// AÑADIR REGISTRO DE SERVICIOS
-builder.Services.AddScoped<UsuarioService>();
-builder.Services.AddScoped<ProyectoService>();
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
->>>>>>> 8aa98172eac0c1ab3fa9f62446475b4ba7fcb215
 {
-    private static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // -----------------------------------------------------------
-        // BLOQUE DE CONEXIÓN A LA BASE DE DATOS
-        // -----------------------------------------------------------
-
-        // 1. Obtiene la cadena de conexión del appsettings.json
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-        // 2. Registra ApplicationDbContext para usar SQL Server
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
-
-        // -----------------------------------------------------------
-
-        // Add services to the container.
-        builder.Services.AddControllersWithViews();
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            // ... código de manejo de errores
-        }
-
-        // ... resto del código ...
-
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
-
-        app.Run();
-    }
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+// ¡ORDEN IMPORTANTE!
+app.UseAuthentication(); // 1. Identificar usuario
+app.UseAuthorization();  // 2. Verificar permisos
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Run();

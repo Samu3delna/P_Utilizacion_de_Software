@@ -1,8 +1,15 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Class1
+namespace P_Utilizacion_de_Software.Models.ViewModels
 {
-	public Class1()
-	{
-	}
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "El correo es obligatorio.")]
+        [EmailAddress]
+        public string Correo { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [DataType(DataType.Password)]
+        public string Contrasena { get; set; } = string.Empty;
+    }
 }

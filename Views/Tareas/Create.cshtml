@@ -1,0 +1,51 @@
+﻿@model P_Utilizacion_de_Software.Models.Tarea
+@{
+    ViewData["Title"] = "Nueva Tarea";
+}
+
+<div class="form-container">
+    <h2>Nueva Tarea</h2>
+    <form asp-action="Create">
+        <input type="hidden" asp-for="ProyectoId" value="@ViewData["ProyectoId"]" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Titulo" class="fw-bold"></label>
+            <input asp-for="Titulo" class="form-control" />
+            <span asp-validation-for="Titulo" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Descripcion" class="fw-bold"></label>
+            <textarea asp-for="Descripcion" class="form-control"></textarea>
+        </div>
+
+        @if (User.IsInRole("Profesor"))
+        {
+            <div class="form-group mb-3">
+                <label asp-for="EstudianteAsignadoId" class="fw-bold">Asignar a:</label>
+                <select asp-for="EstudianteAsignadoId" class="form-select" asp-items="ViewBag.EstudianteAsignadoId"></select>
+            </div>
+        }
+
+        <div class="form-group mb-3">
+            <label asp-for="FechaLimite" class="fw-bold">Fecha Límite</label>
+            <input asp-for="FechaLimite" class="form-control" type="date" />
+        </div>
+
+        <div class="form-group mb-4">
+            <label asp-for="Estado" class="fw-bold"></label>
+            <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<P_Utilizacion_de_Software.Models.EstadoTarea>()"></select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Guardar Tarea</button>
+        <div class="text-center mt-2">
+            <a asp-controller="Proyectos" asp-action="Details" asp-route-id="@ViewData["ProyectoId"]">Cancelar</a>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
