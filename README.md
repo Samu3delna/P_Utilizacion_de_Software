@@ -44,7 +44,6 @@ La aplicación permite gestionar usuarios, proyectos y tareas, con roles diferen
 - Advertencia al intentar eliminar proyectos con tareas asignadas.
 - Alerta visual cuando una tarea está cerca de su fecha límite.
 
----
 
 ## 🛠️ Tecnologías utilizadas
 
@@ -53,8 +52,8 @@ La aplicación permite gestionar usuarios, proyectos y tareas, con roles diferen
 - **Entity Framework Core**
 - **SQL Server**
 - **HTML, CSS y JavaScript**
-- **Bootstrap (si aplica)**
-- **GitHub** para control de versiones
+- **Bootstrap**
+- **GitHub** 
 
 ---
 
