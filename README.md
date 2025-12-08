@@ -1,8 +1,8 @@
 # P_Utilizacion_de_Software
 
 # 📘 Gestor de Proyectos Académicos  
-Sistema web desarrollado como proyecto del curso **Ingeniería y Utilización de Software**.  
-La aplicación permite gestionar usuarios, proyectos y tareas, con roles diferenciados de **profesor** y **estudiante**, siguiendo buenas prácticas, MVC, arquitectura por capas y conexión a base de datos.
+Sistema web desarrollado como proyecto del curso Ingeniería y Utilización de Software.  
+La aplicación permite gestionar usuarios, proyectos y tareas, con roles diferenciados de profesor y estudiante, siguiendo buenas prácticas, MVC, arquitectura por capas y conexión a base de datos.
 
 ---
 
